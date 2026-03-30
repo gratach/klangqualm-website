@@ -9,12 +9,43 @@ function dataPlugin(): Plugin {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (req.url && req.url.startsWith('/data/')) {
-          const relativePath = req.url.slice(1)
-          const fullPath = path.resolve(process.cwd(), relativePath)
+          const url = new URL(req.url, 'http://localhost')
+          const decodedPath = decodeURIComponent(url.pathname.slice(1))
+          const fullPath = path.resolve(process.cwd(), decodedPath)
+
+          // Security: check if path is still within project root/data
+          const dataRoot = path.resolve(process.cwd(), 'data')
+          if (!fullPath.startsWith(dataRoot)) {
+            res.statusCode = 403
+            res.end('Forbidden')
+            return
+          }
+
           if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+            const stats = fs.statSync(fullPath)
+            const range = req.headers.range
+
             if (req.url.endsWith('.json')) res.setHeader('Content-Type', 'application/json')
             if (req.url.endsWith('.mp3')) res.setHeader('Content-Type', 'audio/mpeg')
-            res.end(fs.readFileSync(fullPath))
+
+            if (range) {
+              const parts = range.replace(/bytes=/, "").split("-")
+              const start = parseInt(parts[0], 10)
+              const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1
+              const chunksize = (end - start) + 1
+              const file = fs.createReadStream(fullPath, { start, end })
+              res.writeHead(206, {
+                'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunksize,
+              })
+              file.pipe(res)
+            } else {
+              res.writeHead(200, {
+                'Content-Length': stats.size,
+              })
+              fs.createReadStream(fullPath).pipe(res)
+            }
             return
           }
         }

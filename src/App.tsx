@@ -37,14 +37,17 @@ function App() {
   }
 
   const shuffle = () => {
-    const shuffled = [...projects].sort(() => Math.random() - 0.5)
-    setProjects(shuffled)
-    setCurrentSongIndex(null)
-    setIsPlaying(false)
-    if (audioRef.current) {
-      audioRef.current.pause()
-      audioRef.current.src = ''
+    if (projects.length === 0) return
+    const shuffled = [...projects]
+    // Fisher-Yates shuffle
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
+    setProjects(shuffled)
+    // Always start playing the first song after shuffle
+    setCurrentSongIndex(0)
+    setIsPlaying(true)
   }
 
   const handleEnded = () => {
@@ -64,14 +67,17 @@ function App() {
 
       <main className="song-grid">
         {projects.map((project, index) => (
-          <div key={index} className={`song-tile ${currentSongIndex === index ? 'active' : ''}`}>
+          <div key={project['mp3-path']} className={`song-tile ${currentSongIndex === index ? 'active' : ''}`}>
             <h3>{project.title}</h3>
             <p>{project.description}</p>
             <div className="controls">
               <button onClick={() => playSong(index)}>
                 {currentSongIndex === index && isPlaying ? 'Pause' : 'Play'}
               </button>
-              <a href={`/data/${project['mp3-path']}`} download={project['mp3-path'].split('/').pop()}>
+              <a
+                href={`/data/${project['mp3-path'].split('/').map(encodeURIComponent).join('/')}`}
+                download={project['mp3-path'].split('/').pop()}
+              >
                 Download
               </a>
             </div>
@@ -79,12 +85,13 @@ function App() {
         ))}
       </main>
 
-      {currentSongIndex !== null && (
+      {currentSongIndex !== null && projects[currentSongIndex] && (
         <div className="player-bar">
           <span>Now Playing: {projects[currentSongIndex].title}</span>
           <audio
+            key={projects[currentSongIndex]['mp3-path']}
             ref={audioRef}
-            src={`/data/${projects[currentSongIndex]['mp3-path']}`}
+            src={`/data/${projects[currentSongIndex]['mp3-path'].split('/').map(encodeURIComponent).join('/')}`}
             autoPlay
             controls
             onEnded={handleEnded}
