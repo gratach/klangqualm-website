@@ -1,0 +1,109 @@
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.shuffle-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.shuffle-button:hover {
+  background-color: #535bf2;
+}
+
+.song-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 100px; /* Space for the fixed player bar */
+}
+
+.song-tile {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid transparent;
+  transition: border-color 0.3s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.song-tile.active {
+  border-color: #646cff;
+  background-color: #f0f1ff;
+}
+
+.song-tile:hover {
+  transform: translateY(-4px);
+}
+
+.song-tile h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.song-tile p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.controls button, .controls a {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: white;
+  color: #333;
+  cursor: pointer;
+}
+
+.controls button:hover, .controls a:hover {
+  background-color: #eee;
+}
+
+.player-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #333;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+
+.player-bar audio {
+  width: 100%;
+  max-width: 800px;
+}
