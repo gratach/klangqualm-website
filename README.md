@@ -28,7 +28,9 @@ data/
 │   └── song2.mp3
 └── images
     ├── cover1.jpg
-    └── cover2.jpg
+    ├── cover1.png
+    ├── cover2.jpg
+    └── cover2.png
 ```
 
 # Build
