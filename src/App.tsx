@@ -5,6 +5,8 @@ interface Project {
   title: string
   description: string
   'mp3-path': string
+  'cover-jpg-path'?: string
+  'cover-png-path'?: string
 }
 
 function App() {
@@ -66,23 +68,38 @@ function App() {
       </header>
 
       <main className="song-grid">
-        {projects.map((project, index) => (
-          <div key={project['mp3-path']} className={`song-tile ${currentSongIndex === index ? 'active' : ''}`}>
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <div className="controls">
+        {projects.map((project, index) => {
+          const coverPath = project['cover-jpg-path'] || project['cover-png-path']
+          const tileStyle = coverPath ? {
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/data/${coverPath.split('/').map(encodeURIComponent).join('/')})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            color: 'white'
+          } : {}
+
+          return (
+            <div
+              key={project['mp3-path']}
+              className={`song-tile ${currentSongIndex === index ? 'active' : ''} ${coverPath ? 'has-cover' : ''}`}
+              style={tileStyle}
+            >
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
+              <div className="controls">
               <button onClick={() => playSong(index)}>
-                {currentSongIndex === index && isPlaying ? 'Pause' : 'Play'}
-              </button>
-              <a
-                href={`/data/${project['mp3-path'].split('/').map(encodeURIComponent).join('/')}`}
-                download={project['mp3-path'].split('/').pop()}
-              >
-                Download
-              </a>
+                  {currentSongIndex === index && isPlaying ? 'Pause' : 'Play'}
+                </button>
+                <a
+                  href={`/data/${project['mp3-path'].split('/').map(encodeURIComponent).join('/')}`}
+                  download={project['mp3-path'].split('/').pop()}
+                >
+                  Download
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </main>
 
       {currentSongIndex !== null && projects[currentSongIndex] && (

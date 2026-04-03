@@ -27,6 +27,8 @@ function dataPlugin(): Plugin {
 
             if (req.url.endsWith('.json')) res.setHeader('Content-Type', 'application/json')
             if (req.url.endsWith('.mp3')) res.setHeader('Content-Type', 'audio/mpeg')
+            if (req.url.endsWith('.jpg') || req.url.endsWith('.jpeg')) res.setHeader('Content-Type', 'image/jpeg')
+            if (req.url.endsWith('.png')) res.setHeader('Content-Type', 'image/png')
 
             if (range) {
               const parts = range.replace(/bytes=/, "").split("-")
