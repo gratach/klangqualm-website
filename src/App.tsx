@@ -71,12 +71,9 @@ function App() {
         {projects.map((project, index) => {
           const coverPath = project['cover-jpg-path'] || project['cover-png-path']
           const tileStyle = coverPath ? {
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/data/${coverPath.split('/').map(encodeURIComponent).join('/')})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
+            '--cover-image': `url(/data/${coverPath.split('/').map(encodeURIComponent).join('/')})`,
             color: 'white'
-          } : {}
+          } as React.CSSProperties : {}
 
           return (
             <div
