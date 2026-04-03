@@ -79,6 +79,7 @@ header {
 
 .song-tile.has-cover.active {
   border-color: #646cff;
+  border-width: 7px;
 }
 
 .song-tile:hover {
