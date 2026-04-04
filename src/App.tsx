@@ -9,8 +9,14 @@ interface Project {
   'cover-png-path'?: string
 }
 
+interface Config {
+  'website-title': string
+  'website-description': string
+}
+
 function App() {
   const [projects, setProjects] = useState<Project[]>([])
+  const [config, setConfig] = useState<Config | null>(null)
   const [currentSongIndex, setCurrentSongIndex] = useState<number | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -20,6 +26,11 @@ function App() {
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error('Error loading projects:', err))
+
+    fetch('/data/config.json')
+      .then((res) => res.json())
+      .then((data) => setConfig(data))
+      .catch((err) => console.error('Error loading config:', err))
   }, [])
 
   const playSong = (index: number) => {
@@ -63,9 +74,15 @@ function App() {
   return (
     <div className="app-container">
       <header>
-        <h1>Klangqualm</h1>
+        <h1>{config?.['website-title'] || 'Klangqualm'}</h1>
         <button onClick={shuffle} className="shuffle-button">Shuffle Songs</button>
       </header>
+
+      {config?.['website-description'] && (
+        <section className="website-description">
+          <p>{config['website-description']}</p>
+        </section>
+      )}
 
       <main className="song-grid">
         {projects.map((project, index) => {
